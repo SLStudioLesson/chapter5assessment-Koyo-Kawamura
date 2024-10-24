@@ -1,8 +1,12 @@
 package com.taskapp.logic;
 
+import java.util.List;
+
 import com.taskapp.dataaccess.LogDataAccess;
 import com.taskapp.dataaccess.TaskDataAccess;
 import com.taskapp.dataaccess.UserDataAccess;
+import com.taskapp.model.Task;
+import com.taskapp.model.User;
 
 public class TaskLogic {
     private final TaskDataAccess taskDataAccess;
@@ -28,14 +32,55 @@ public class TaskLogic {
         this.userDataAccess = userDataAccess;
     }
 
-    /**
-     * 全てのタスクを表示します。
-     *
-     * @see com.taskapp.dataaccess.TaskDataAccess#findAll()
-     * @param loginUser ログインユーザー
-     */
-    // public void showAll(User loginUser) {
-    // }
+   /**
+ * 全てのタスクを表示します。
+ *
+ * @see com.taskapp.dataaccess.TaskDataAccess#findAll()
+ * @param loginUser ログインユーザー
+ */
+public void showAll(User loginUser) {
+    // リスト作成
+    List<Task> tasks = taskDataAccess.findAll();
+
+    // 取得したデータを表示する
+    tasks.forEach(task -> {
+        String status;
+        switch (task.getStatus()) {
+            case 0:
+                status = "未着手";
+                break;
+            case 1:
+                status = "着手中";
+                break;
+            case 2:
+                status = "完了";
+                break;
+            default:
+                status = "不明"; // 状態が不明な場合
+                break;
+        }
+        User assignedUser = task.getRepUser(); 
+       
+        String repUserName;
+
+        // 担当者名を取得
+        if (assignedUser != null) {
+            if (assignedUser.getCode() == loginUser.getCode()) {
+                repUserName = "あなたが担当しています"; // ログインユーザーが担当者の場合
+            } else {
+                repUserName = assignedUser.getName() + "が担当しています"; // 担当者の名前を表示
+            }
+        } else {
+            repUserName = "担当者情報が見つかりません"; // 担当者が見つからなかった場合
+        }
+
+        // 出力
+        System.out.println(task.getCode() + ". " + "タスク名：" + task.getName() +
+                           ", 担当者名：" + repUserName + ", ステータス： " + status);
+    });
+}
+
+
 
     /**
      * 新しいタスクを保存します。

@@ -1,5 +1,14 @@
 package com.taskapp.dataaccess;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.taskapp.model.Task;
+import com.taskapp.model.User;
+
 public class TaskDataAccess {
 
     private final String filePath;
@@ -13,6 +22,7 @@ public class TaskDataAccess {
 
     /**
      * 自動採点用に必要なコンストラクタのため、皆さんはこのコンストラクタを利用・削除はしないでください
+     * 
      * @param filePath
      * @param userDataAccess
      */
@@ -27,14 +37,43 @@ public class TaskDataAccess {
      * @see com.taskapp.dataaccess.UserDataAccess#findByCode(int)
      * @return タスクのリスト
      */
-    // public List<Task> findAll() {
-    //     try () {
+    public List<Task> findAll() {
+        List<Task> tasks = new ArrayList<>();
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            reader.readLine(); // ヘッダー行を読み飛ばす
+            
+            while ((line = reader.readLine()) != null) {
+                String[] values = line.split(",");
+                
+                // CSVに間違いがあったらスキップする
+                if (values.length != 4) {
+                    continue;
+                }
+                
+                // int code, String name, int status, User repUser
+                int code = Integer.parseInt(values[0]);
+                String name = values[1];
+                int status = Integer.parseInt(values[2]);
+                String repUserName = values[3]; 
 
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    //     return null;
-    // }
+                 // 仮の User オブジェクトを作成 (ダミーデータ)
+            User user = new User(0, repUserName, "dummy@example.com", "dummyPassword");
+                
+                
+                // Taskオブジェクトを作成しリストに追加
+                Task task = new Task(code, name, status, user);
+                tasks.add(task);
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return tasks;
+    }
+    
 
     /**
      * タスクをCSVに保存します。
