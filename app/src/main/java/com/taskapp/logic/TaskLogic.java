@@ -49,9 +49,7 @@ public class TaskLogic {
         tasks.forEach(task -> {
             String status;
             switch (task.getStatus()) {
-                case 0:
-                    status = "未着手";
-                    break;
+
                 case 1:
                     status = "着手中";
                     break;
@@ -59,7 +57,7 @@ public class TaskLogic {
                     status = "完了";
                     break;
                 default:
-                    status = "不明"; // 状態が不明な場合
+                    status = "未着手";
                     break;
             }
 
@@ -83,7 +81,7 @@ public class TaskLogic {
 
             // 出力
             System.out.println(task.getCode() + ". " + "タスク名：" + task.getName() +
-                               ", 担当者名：" + repUserName + ", ステータス： " + status);
+                    ", 担当者名：" + repUserName + ", ステータス： " + status);
         });
     }
 
@@ -93,30 +91,27 @@ public class TaskLogic {
      * @see com.taskapp.dataaccess.UserDataAccess#findByCode(int)
      * @see com.taskapp.dataaccess.TaskDataAccess#save(com.taskapp.model.Task)
      * @see com.taskapp.dataaccess.LogDataAccess#save(com.taskapp.model.Log)
-     * @param code タスクコード
-     * @param name タスク名
+     * @param code        タスクコード
+     * @param name        タスク名
      * @param repUserCode 担当ユーザーコード
-     * @param loginUser ログインユーザー
+     * @param loginUser   ログインユーザー
      * @throws AppException ユーザーコードが存在しない場合にスローされます
      */
     public void save(int code, String name, int status, User loginUser) throws AppException {
-        
+
         User repUser = userDataAccess.findByCode(loginUser.getCode());
         if (repUser == null) {
             throw new AppException("存在するユーザーコードを入力してください");
         }
-
-
 
         Task newTask = new Task(code, name, 0, repUser); // 初期ステータスは0（未着手）
 
         taskDataAccess.save(newTask);
         System.out.println("タスクの登録が完了しました。");
 
-         // ログを保存
-    Log newLog = new Log(code, 0, loginUser.getCode(), LocalDate.now()); // 初期ステータスと日付を含む
-    logDataAccess.save(newLog);
-        
+        // ログを保存
+        Log newLog = new Log(code, 0, loginUser.getCode(), LocalDate.now()); // 初期ステータスと日付を含む
+        logDataAccess.save(newLog);
 
     }
 
@@ -126,22 +121,20 @@ public class TaskLogic {
      * @see com.taskapp.dataaccess.TaskDataAccess#findByCode(int)
      * @see com.taskapp.dataaccess.TaskDataAccess#update(com.taskapp.model.Task)
      * @see com.taskapp.dataaccess.LogDataAccess#save(com.taskapp.model.Log)
-     * @param code タスクコード
-     * @param status 新しいステータス
+     * @param code      タスクコード
+     * @param status    新しいステータス
      * @param loginUser ログインユーザー
      * @throws AppException タスクコードが存在しない、またはステータスが前のステータスより1つ先でない場合にスローされます
      */
-     public void changeStatus(int code, int status, User loginUser) throws AppException {
-
-       
+    public void changeStatus(int code, int status, User loginUser) throws AppException {
 
         if (!isNumeric(codeInput)) {
             System.out.println("半角の整数で入力してください。");
             System.out.println();
             continue;
         }
-        //選択肢一覧表示
-     }
+        // 選択肢一覧表示
+    }
 
     /**
      * タスクを削除します。

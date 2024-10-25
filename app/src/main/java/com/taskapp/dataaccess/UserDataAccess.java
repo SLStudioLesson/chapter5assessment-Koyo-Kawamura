@@ -52,7 +52,7 @@ public class UserDataAccess {
          }
          return user;
         }
-     
+    
     
 
     /**
@@ -60,6 +60,7 @@ public class UserDataAccess {
      * @param code 取得するユーザーのコード
      * @return 見つかったユーザー
      */
+    //users.csv
      public User findByCode(int code) {
         User user = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
