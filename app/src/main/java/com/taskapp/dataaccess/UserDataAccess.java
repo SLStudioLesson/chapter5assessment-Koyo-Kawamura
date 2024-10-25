@@ -3,7 +3,6 @@ package com.taskapp.dataaccess;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import com.taskapp.model.User;
 
@@ -63,16 +62,13 @@ public class UserDataAccess {
      */
      public User findByCode(int code) {
         User user = null;
-
-
-        //users.csvから情報読み込み
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
 
             reader.readLine();
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
-                //コードが合致しなければ抜ける
+
                 if (Integer.parseInt(values[0]) != code) continue;
 
                 // コードが一致したらそのデータをUserオブジェクトにマッピング

@@ -99,18 +99,16 @@ public class TaskLogic {
      * @param loginUser ログインユーザー
      * @throws AppException ユーザーコードが存在しない場合にスローされます
      */
-    public void save(int code, String name, int repUserCode, User loginUser) throws AppException {
+    public void save(int code, String name, int status, User loginUser) throws AppException {
         
-        User user = userDataAccess.findByCode(repUserCode);
-        if (user == null) {
+        User repUser = userDataAccess.findByCode(loginUser.getCode());
+        if (repUser == null) {
             throw new AppException("存在するユーザーコードを入力してください");
         }
 
 
 
-        
-
-        Task newTask = new Task(code, name, 0, user); // 初期ステータスは0（未着手）
+        Task newTask = new Task(code, name, 0, repUser); // 初期ステータスは0（未着手）
 
         taskDataAccess.save(newTask);
         System.out.println("タスクの登録が完了しました。");
@@ -133,33 +131,17 @@ public class TaskLogic {
      * @param loginUser ログインユーザー
      * @throws AppException タスクコードが存在しない、またはステータスが前のステータスより1つ先でない場合にスローされます
      */
-    public void changeStatus(int code, int status, User loginUser) throws AppException {
-        // タスクを取得
-        Task task = taskDataAccess.findByCode(code);
+     public void changeStatus(int code, int status, User loginUser) throws AppException {
 
-        int taskCode = task.getStatus();
-        
-        if (task == null) {
-            throw new AppException("存在するタスクコードを入力してください");
+       
+
+        if (!isNumeric(codeInput)) {
+            System.out.println("半角の整数で入力してください。");
+            System.out.println();
+            continue;
         }
-    
-        else if (taskCode ==0&& status ==2) {//変更できるパターン 0->1,1->2
-            throw new AppException("ステータスは、前のステータスより1つ先のもののみを選択してください");
-        }else if((taskCode == 2)){
-            throw new AppException("ステータスは、前のステータスより1つ先のもののみを選択してください");
-        }else if (taskCode == 1 && status == 1) {
-            throw new AppException("ステータスは、前のステータスより1つ先のもののみを選択してください");
-        }
-        task = new Task(task.getCode(), task.getName(), status, loginUser);
-        taskDataAccess.update(task);
-    
-        // ログを記録
-        Log log = new Log(code, loginUser.getCode(), status, LocalDate.now());
-            //logをlogDataAccessに渡して書き込ませる
-            logDataAccess.save(log);
-        System.out.println("ステータスの変更が完了しました。");
-    }
-    
+        //選択肢一覧表示
+     }
 
     /**
      * タスクを削除します。
