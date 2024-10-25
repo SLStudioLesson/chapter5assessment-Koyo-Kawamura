@@ -81,6 +81,6 @@ public class UserDataAccess {
          } catch (IOException e) {
             e.printStackTrace();
         }
-         return null;
+         return user;
      }
 }

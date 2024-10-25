@@ -1,7 +1,9 @@
 package com.taskapp.dataaccess;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +58,9 @@ public class TaskDataAccess {
                 int code = Integer.parseInt(values[0]);
                 String name = values[1];
                 int status = Integer.parseInt(values[2]);
-                String repUserName = values[3]; 
+                int  repUserCode = Integer.parseInt(values[3]);
 
-                 // 仮の User オブジェクトを作成 (ダミーデータ)
-            User user = new User(0, repUserName, "dummy@example.com", "dummyPassword");
+                 User user = userDataAccess.findByCode(repUserCode);
                 
                 
                 // Taskオブジェクトを作成しリストに追加
@@ -79,13 +80,17 @@ public class TaskDataAccess {
      * タスクをCSVに保存します。
      * @param task 保存するタスク
      */
-    // public void save(Task task) {
-    //     try () {
+     public void save(Task task) {
+         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
 
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+             String line = createLine(task);
+            writer.newLine();
+            writer.write(line);
+
+         } catch (IOException e) {
+             e.printStackTrace();
+     }
+     }
 
     /**
      * コードを基にタスクデータを1件取得します。
@@ -130,6 +135,7 @@ public class TaskDataAccess {
      * @param task フォーマットを作成するタスク
      * @return CSVに書き込むためのフォーマット文字列
      */
-    // private String createLine(Task task) {
-    // }
+     private String createLine(Task task) {
+        return task.getCode() + "," + task.getName() + "," + task.getStatus() + "," + task.getRepUser();
+    }
 }
